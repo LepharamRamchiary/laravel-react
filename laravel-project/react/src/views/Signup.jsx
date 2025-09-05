@@ -13,6 +13,7 @@ export default function Signup() {
   const emailRef = useRef();
   const passwordRef = useRef();
   const confirmPasswordRef = useRef();
+  const [error, setError] = useState(null);
 
   const {setUser,setToken} = useStateContext();
 
@@ -33,7 +34,8 @@ export default function Signup() {
       const response = err.response;
       if (response && response.status === 422) {
         // response.data.errors;
-        console.log(response.data.errors);
+        // console.log(response.data.errors);
+        setError(response.data.errors);
       }
     })
     
@@ -44,6 +46,11 @@ export default function Signup() {
       <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
         Create Account
       </h2>
+      {error && <div className="bg-red-500 p-4 rounded mb-6">
+        {Object.keys(error).map(key => (
+          <p key={key} className="text-white">{error[key]}</p>
+        ))}
+      </div>}
       <form onSubmit={handleSubmit} className="space-y-5">
         <div>
           <label className="block text-sm font-medium text-gray-600">Full Name</label>
