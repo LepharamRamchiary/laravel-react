@@ -9,6 +9,11 @@ export default function DefaultLayout() {
     return <Navigate to="/login" />;
   }
 
+  const onLogout = (e) => {
+    e.preventDefault();
+    window.location.href = "/logout";
+  }
+
   return (
     <div id="defaultLayout" className="flex h-screen bg-gray-100">
       {/* Sidebar */}
@@ -35,6 +40,7 @@ export default function DefaultLayout() {
           <div className="text-xl font-semibold text-gray-800">Header</div>
           <div className="text-gray-600">
             {user?.name || "Logged in user"}
+            <a href="#" onClick={onLogout} className="bg-gray-300 px-4 py-1 rounded-lg">Logout</a>
           </div>
         </header>
 
