@@ -1,19 +1,42 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import axiosClient from "../axios-client.js";
+import { useStateContext } from "../context/ContextProvider.jsx";
 
 export default function Signup() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  // const [name, setName] = useState("");
+  // const [email, setEmail] = useState("");
+  // const [password, setPassword] = useState("");
+  // const [confirmPassword, setConfirmPassword] = useState("");
+
+  const nameRef = useRef();
+  const emailRef = useRef();
+  const passwordRef = useRef();
+  const confirmPasswordRef = useRef();
+
+  const {setUser,setToken} = useStateContext();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (password !== confirmPassword) {
-      alert("Passwords do not match!");
-      return;
+    const payload = {
+      name: nameRef.current.value,
+      email: emailRef.current.value,
+      password: passwordRef.current.value,
+      password_confirmation: confirmPasswordRef.current.value,
     }
-    console.log("Name:", name, "Email:", email, "Password:", password);
+    // console.log(payload);
+
+    axiosClient.post("/signup", payload).then(({ data }) => {
+      setUser(data.user);
+      setToken(data.token);
+    }).catch((err) => {
+      const response = err.response;
+      if (response && response.status === 422) {
+        // response.data.errors;
+        console.log(response.data.errors);
+      }
+    })
+    
   };
 
   return (
@@ -26,8 +49,8 @@ export default function Signup() {
           <label className="block text-sm font-medium text-gray-600">Full Name</label>
           <input
             type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            // value={name}
+            ref={nameRef}
             className="w-full px-4 py-2 mt-1 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Enter your full name"
             required
@@ -38,8 +61,9 @@ export default function Signup() {
           <label className="block text-sm font-medium text-gray-600">Email</label>
           <input
             type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            // value={email}
+            // onChange={(e) => setEmail(e.target.value)}
+            ref={emailRef}
             className="w-full px-4 py-2 mt-1 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Enter your email"
             required
@@ -50,8 +74,9 @@ export default function Signup() {
           <label className="block text-sm font-medium text-gray-600">Password</label>
           <input
             type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            // value={password}
+            // onChange={(e) => setPassword(e.target.value)}
+            ref={passwordRef}
             className="w-full px-4 py-2 mt-1 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Enter your password"
             required
@@ -62,8 +87,9 @@ export default function Signup() {
           <label className="block text-sm font-medium text-gray-600">Confirm Password</label>
           <input
             type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
+            // value={confirmPassword}
+            // onChange={(e) => setConfirmPassword(e.target.value)}
+            ref={confirmPasswordRef}
             className="w-full px-4 py-2 mt-1 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Re-enter your password"
             required
