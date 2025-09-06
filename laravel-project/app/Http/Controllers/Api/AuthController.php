@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\SignupRequest;
+// use Illuminate\Foundation\Auth\User;
 use App\Models\User;
 // use Illuminate\Container\Attributes\Auth;
 use Illuminate\Support\Facades\Auth;
@@ -25,7 +26,7 @@ class AuthController extends Controller
 
         $token = $user->createToken('main')->plainTextToken;
 
-        return response(compact('user', 'token'), 201);
+        return response(compact('user', 'token'));
     }
 
     public function login(LoginRequest $request) {
