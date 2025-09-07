@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 const StateContext = createContext({
     user: null,
@@ -8,13 +8,14 @@ const StateContext = createContext({
 });
 
 export const ContextProvider = ({ children }) => {
-
     // const [user, setUser] = useState({});
     const [user, setUser] = useState(() => {
         const storedUser = localStorage.getItem("USER");
         return storedUser ? JSON.parse(storedUser) : null;
     });
-    const [token, _setToken] = useState(localStorage.getItem("ACCESS_TOKEN") || null);
+    const [token, _setToken] = useState(
+        localStorage.getItem("ACCESS_TOKEN") || null
+    );
 
     const setToken = (token) => {
         _setToken(token);
@@ -23,9 +24,33 @@ export const ContextProvider = ({ children }) => {
         } else {
             localStorage.removeItem("ACCESS_TOKEN");
         }
-    }
+    };
 
-    return <StateContext.Provider value={{user, token, setToken, setUser}}>{children}</StateContext.Provider>;
+    useEffect(() => {
+        if (user) {
+            localStorage.setItem("USER", JSON.stringify(user));
+        } else {
+            localStorage.removeItem("USER");
+        }
+    }, [user]);
+
+    useEffect(() => {
+        if (token && !user) {
+            axiosClient
+                .get("/user")
+                .then(({ data }) => setUser(data))
+                .catch(() => {
+                    setToken(null); // token invalid
+                    setUser(null);
+                });
+        }
+    }, [token]);
+
+    return (
+        <StateContext.Provider value={{ user, token, setToken, setUser }}>
+            {children}
+        </StateContext.Provider>
+    );
 };
 
 export const useStateContext = () => useContext(StateContext);

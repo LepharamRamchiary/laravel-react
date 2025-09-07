@@ -12,39 +12,12 @@ export default function DefaultLayout() {
 
     const onLogout = (e) => {
         e.preventDefault();
-        
+
         axiosClient.post("/logout").then(() => {
             setToken(null);
             setUser({});
         });
     };
-
-    // useEffect(() => {
-    //   if(!token) return;
-    //     axiosClient.get("/user").then(({ data }) => {
-    //         setUser(data);
-    //     });
-    // }, [token]);
-
-    useEffect(() => {
-        if (user) {
-            localStorage.setItem("USER", JSON.stringify(user));
-        } else {
-            localStorage.removeItem("USER");
-        }
-    }, [user]);
-
-    useEffect(() => {
-        if (token && !user) {
-            axiosClient
-                .get("/user")
-                .then(({ data }) => setUser(data))
-                .catch(() => {
-                    setToken(null); // token invalid
-                    setUser(null);
-                });
-        }
-    }, [token]);
 
     return (
         <div id="defaultLayout" className="flex h-screen bg-gray-100">
