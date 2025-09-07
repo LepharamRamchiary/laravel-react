@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axiosClient from "../axios-client.js";
 import { useStateContext } from "../context/ContextProvider";
+import { Link } from "react-router-dom";
 
 export default function User() {
     const [users, setUsers] = useState([]);
@@ -21,6 +22,21 @@ export default function User() {
             })
             .catch(() => {})
             .finally(() => setLoading(false));
+    };
+
+    const onDelete = (u) => {
+        if (!window.confirm("Are you sure you want to delete this user?")) {
+            return;
+        } else {
+            axiosClient
+                .delete(`/users/${u.id}`)
+                .then(() => {
+                    // setUsers(users.filter((u) => u.id !== u.id));
+                    alert("User deleted sucessfully");
+                    getUsers();
+                })
+                .catch(() => {});
+        }
     };
 
     return (
@@ -62,9 +78,17 @@ export default function User() {
 
             {/* User List Table */}
             <div className="bg-white shadow-md rounded-xl p-6">
-                <h2 className="text-xl font-semibold text-gray-700 mb-4">
-                    All Users
-                </h2>
+                <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-xl font-semibold text-gray-700">
+                        All Users
+                    </h2>
+                    <Link
+                        className="bg-green-600 text-white px-4 py-1 rounded-lg cursor-pointer hover:bg-green-400 hover:text-gray-800"
+                        to="/users/new"
+                    >
+                        Add New User
+                    </Link>
+                </div>
 
                 {/* Loading State */}
                 {loading ? (
@@ -77,6 +101,7 @@ export default function User() {
                             <tr className="bg-gray-100 text-left text-gray-600">
                                 <th className="p-3">Name</th>
                                 <th className="p-3">Email</th>
+                                <th className="p-3">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -87,6 +112,20 @@ export default function User() {
                                 >
                                     <td className="p-3">{u.name}</td>
                                     <td className="p-3">{u.email}</td>
+                                    <td className="p-3 flex justify-center items-center gap-3 ">
+                                        <Link
+                                            to={"/users/" + u.id}
+                                            className="coursor-pointer bg-green-500 text-white hover:bg-green-400 px-2 py-0.5 rounded-lg"
+                                        >
+                                            Edit
+                                        </Link>
+                                        <button
+                                            className="bg-red-500 text-white hover:bg-red-400 px-2 py-0.5 rounded-lg cursor-pointer "
+                                            onClick={(e) => onDelete(u)}
+                                        >
+                                            Delete
+                                        </button>
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>
