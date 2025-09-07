@@ -112,7 +112,7 @@ export default function User() {
                                 >
                                     <td className="p-3">{u.name}</td>
                                     <td className="p-3">{u.email}</td>
-                                    <td className="p-3 flex justify-center items-center gap-3 ">
+                                    <td className="p-3 flex gap-2 items-center">
                                         <Link
                                             to={"/users/" + u.id}
                                             className="coursor-pointer bg-green-500 text-white hover:bg-green-400 px-2 py-0.5 rounded-lg"
