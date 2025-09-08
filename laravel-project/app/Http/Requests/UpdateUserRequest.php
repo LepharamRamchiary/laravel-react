@@ -3,7 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Password;
+use Illuminate\Validation\Rules\Password;
 
 class UpdateUserRequest extends FormRequest
 {
@@ -24,13 +24,25 @@ class UpdateUserRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:55',
-            'email' => 'required|email|max:255|unique:users,email,' . $this->user->id,
+            'email' => 'required|email|max:255|unique:users,email,' . $this->route('user')->id,
             'password' => [
                 'nullable',
+                'confirmed',
                 Password::min(8)
-                    ->letter()
-                    ->number()
+                    ->letters()
+                    ->numbers()
             ],
+            'password_confirmation' => 'nullable|string'
         ];
+    }
+
+    /**
+     * Configure the validator instance.
+     */
+    public function withValidator($validator)
+    {
+        $validator->sometimes('password', 'required', function ($input) {
+            return !empty($input->password);
+        });
     }
 }
