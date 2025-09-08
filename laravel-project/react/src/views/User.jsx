@@ -7,7 +7,7 @@ export default function User() {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    const { user } = useStateContext();
+    const { user, setNotification } = useStateContext();
 
     useEffect(() => {
         getUsers();
@@ -32,7 +32,8 @@ export default function User() {
                 .delete(`/users/${u.id}`)
                 .then(() => {
                     // setUsers(users.filter((u) => u.id !== u.id));
-                    alert("User deleted sucessfully");
+                    // alert("User deleted sucessfully");
+                    setNotification("User deleted sucessfully");
                     getUsers();
                 })
                 .catch(() => {});
